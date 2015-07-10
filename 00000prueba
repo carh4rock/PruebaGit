@@ -1,0 +1,49 @@
+#!/bin/bash
+TP="/tmp/dell"
+
+ls /etc/apache2/sites-enabled > $TP
+
+if [ -f  $TP ] && [ -s $TP ]
+then
+	cat $TP | awk -F- '{ print $2 $3 }' | uniq  > otro
+fi
+
+
+cont=0
+
+:>chrome
+
+cat otro | while read line
+do
+	case $line in
+		"titulacion")
+				echo "directorioWeb[$cont]=\"STFI_web\"" >> chrome
+				;;
+		"revision")
+				echo "directorioWeb[$cont]=\"REV_web\"" >> chrome
+				;;
+		"movilidad")
+				echo "directorioWeb[$cont]=\"MOV_web\"" >> chrome
+				;;
+		"pi")
+				echo "directorioWeb[$cont]=\"PI\"" >> chrome
+				;;
+		"otros")
+				echo "directorioWeb[$cont]=\"Otros\"" >> chrome
+				;;
+		*)
+				:
+				#echo "[$cont]No exite"
+				;;
+	esac
+	
+	cont=$[ $cont+1 ]
+done
+
+
+cat opera | sed '/VACACIONES/a\
+'`cat chrome`''
+
+
+
+
